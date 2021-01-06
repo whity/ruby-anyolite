@@ -29,14 +29,17 @@ class Anyolite
     end
 
     def render(data, type: :template, **options)
-      in_template? = self[:__in_template__]
+      begin
+        self[:__in_render__] ||= 0
+        self[:__in_render__] += 1
 
-      self[:__in_template__] = true if !in_template?
-
-      result = Renderer.send(type.to_sym, self, data, **options)
+        result = Renderer.send(type.to_sym, self, data, **options)
+      ensure
+        self[:__in_render__] -= 1
+      end
 
       # if already inside the template, return the rendered string.
-      return result if in_template?
+      return result[:body] if self[:__in_render__].positive?
 
       @rendered   = true
       @res.status = options[:status] || 200

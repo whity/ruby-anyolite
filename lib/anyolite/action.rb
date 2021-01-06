@@ -37,7 +37,11 @@ class Anyolite
       app.call!(context)
       app = nil
 
-      context.res.finish
+      status, headers, body = context.res.finish
+
+      body = [body] if body.is_a?(::String)
+
+      [status, headers, body]
     end
   end
 

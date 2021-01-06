@@ -1,14 +1,13 @@
 # frozen_string_literal: true
 
 require 'json'
-require_relative '../context'
 
 class Anyolite
   module Renderer
     class << self
       def text(_ctx, data, **)
         {
-          body:         [data.nil? ? '' : data],
+          body:         data.nil? ? '' : data,
           content_type: 'text/plain',
         }
       end

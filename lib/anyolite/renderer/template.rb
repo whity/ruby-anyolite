@@ -1,23 +1,28 @@
 # frozen_string_literal: true
 
 require 'erb'
-require_relative '../context'
 
 class Anyolite
   module Renderer
+    class TemplateNotFoundError < ::StandardError
+    end
+
     class ERB < ::ERB
       class Data
         def initialize(**kwargs)
-          # for each key in hash create a instance variable
-          kwargs.each do |key, value|
-            var_name = "@#{key}".to_sym
-            instance_variable_set(var_name, value)
-            self.class.send(:attr_reader, key)
-          end
+          @data = kwargs
         end
 
-        def binding
+        def binding # rubocop:disable Lint/UselessMethodDefinition
           super
+        end
+
+        def method_missing(name, *)
+          @data[name]
+        end
+
+        def respond_to_missing?(name, *)
+          @data.key?(name) || super
         end
       end
 
@@ -29,14 +34,17 @@ class Anyolite
 
     class << self
       def template(ctx, template, **options)
-        template_file = "#{ctx.config[:views]}/#{template}.html.erb"
+        template_file = "#{ctx.config[:templates]}/#{template}.html.erb"
         content       = File.read(template_file)
+        locals        = options[:locals] || {}
+        locals[:c]    = ctx
+        body          = ERB.new(content).result(**locals)
 
-        locals     = options[:locals] || {}
-        locals[:c] = ctx
+        # clean trailing spaces
+        body = body.gsub(/(^\s*|\s*$)/, '')
 
         {
-          body:         [ERB.new(content).result(**locals)],
+          body:         body,
           content_type: 'text/html',
         }
       end

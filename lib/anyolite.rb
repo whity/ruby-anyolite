@@ -8,10 +8,11 @@ class Anyolite < Hanami::Router
 
   def initialize(options = {}, &blk)
     @middleware = []
-    @context    = {}
+    @context    = options[:context] || {}
+    @app        = nil
 
-    if self.class.superclass != self.class
-      options[:namespace] = self.class if options[:namespace].nil?
+    if self.class != Anyolite && options[:namespace].nil?
+      options[:namespace] = self.class
     end
 
     super(options, &blk)
@@ -29,18 +30,18 @@ class Anyolite < Hanami::Router
   end
 
   %i[get post put patch delete options trace].each do |verb|
-    define_method(verb) do |path, **options|
+    define_method(verb) do |path, options = {}|
       options[:to] = _wrap_action(options[:to])
-      super(path, **options)
+      super(path, options)
     end
   end
 
   protected
 
   def _wrap_action(to)
-    return to if to.is_a?(::String)
+    return Callable.new(to) if to.is_a?(::Proc)
 
-    Callable.new(to)
+    to
   end
 
   def _app
