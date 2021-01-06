@@ -22,7 +22,7 @@ class Anyolite
         end
 
         def respond_to_missing?(name, *)
-          @data.key?(name) || super
+          @data.key?(name)
         end
       end
 
