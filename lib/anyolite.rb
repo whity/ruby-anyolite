@@ -8,7 +8,7 @@ class Anyolite < Hanami::Router
 
   def initialize(options = {}, &blk)
     @middleware = []
-    @context    = options[:context] || {}
+    @options    = options
     @app        = nil
 
     if self.class != Anyolite && options[:namespace].nil?
@@ -48,14 +48,14 @@ class Anyolite < Hanami::Router
     return @app if !@app.nil?
 
     router     = self.class.instance_method(:call).bind(self)
-    context    = @context
+    options    = @options
     middleware = @middleware
     @app       = Rack::Builder.new do
       middleware.each do |item|
         use(item[:klass], *item[:options])
       end
 
-      use(Middleware::Context, **context)
+      use(Middleware::Context, **options)
 
       run(router)
     end

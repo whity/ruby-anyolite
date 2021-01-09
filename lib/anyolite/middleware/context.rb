@@ -14,7 +14,7 @@ class Anyolite
         result = nil
 
         begin
-          klass                = @options[:class] || Anyolite::Context
+          klass                = @options[:context_class] || Anyolite::Context
           env['stack.context'] = klass.new(env, **@options)
           result               = @app.call(env)
         ensure

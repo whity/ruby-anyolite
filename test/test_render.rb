@@ -10,9 +10,7 @@ class RenderTest < Minitest::Test
 
   def setup
     @app = Anyolite.new(
-      context: {
-        templates: "#{__dir__}/templates",
-      },
+      templates: "#{__dir__}/templates",
     )
 
     app.get(
@@ -28,6 +26,13 @@ class RenderTest < Minitest::Test
         ctx.render_template('with_partials', locals: {name: 'world'})
       },
     )
+
+    app.get(
+      '/with-layout',
+      to: lambda { |ctx|
+        ctx.render_template('simple', layout: 'layout', locals: {name: 'world'})
+      }
+    )
   end
 
   def test_render_template_simple
@@ -38,5 +43,10 @@ class RenderTest < Minitest::Test
   def test_render_template_with_partials
     get('/with-partials')
     assert_equal("hello WORLD", last_response.body)
+  end
+
+  def test_render_template_with_layout
+    get('/with-layout')
+    assert_equal("header\nhello world\nfooter", last_response.body)
   end
 end
