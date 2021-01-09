@@ -46,14 +46,14 @@ class Anyolite
 
         # render template
         template_file = "#{ctx.config[:templates]}/#{template}.html.erb"
-        main          = File.read(template_file)
-        main          = ERB.new(main).result(**locals, &block)
+        content       = File.read(template_file)
+        content       = ERB.new(content).result(**locals, &block)
 
         # clean trailing spaces
-        main = main.gsub(/(^\s*|\s*$)/, '')
+        content = content.gsub(/(^\s*|\s*$)/, '')
 
         result = {
-          body:         main,
+          body:         content,
           content_type: 'text/html',
         }
 
