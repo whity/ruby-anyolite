@@ -37,7 +37,7 @@ class Anyolite
     end
 
     class << self
-      def template(ctx, template, **options)
+      def template(ctx, template, **options, &block)
         options[:layout] ||= ctx.config[:layout]
         options.delete(:layout) if ctx[:__in_render__] > 1
 
@@ -45,8 +45,9 @@ class Anyolite
         locals[:c] = ctx
 
         # render template
-        main = _read_template(ctx, template)
-        main = ERB.new(main).result(**locals)
+        template_file = "#{ctx.config[:templates]}/#{template}.html.erb"
+        main          = File.read(template_file)
+        main          = ERB.new(main).result(**locals, &block)
 
         # clean trailing spaces
         main = main.gsub(/(^\s*|\s*$)/, '')
@@ -58,23 +59,8 @@ class Anyolite
 
         return result if !options[:layout]
 
-        layout = _read_template(ctx, options[:layout])
-        layout = ERB.new(layout).result(**locals) { main }
-
-        # clean trailing spaces
-        layout = layout.gsub(/(^\s*|\s*$)/, '')
-
-        {
-          body:         layout,
-          content_type: 'text/html',
-        }
-      end
-
-      protected
-
-      def _read_template(ctx, name)
-        template_file = "#{ctx.config[:templates]}/#{name}.html.erb"
-        File.read(template_file)
+        layout = options.delete(:layout)
+        template(ctx, layout, options) { main }
       end
     end
   end
