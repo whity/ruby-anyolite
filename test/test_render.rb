@@ -21,6 +21,13 @@ class RenderTest < Minitest::Test
     )
 
     app.get(
+      '/inline',
+      to: lambda { |ctx|
+        ctx.render_template_inline('hello <%= name %>', locals: {name: 'world'})
+      },
+    )
+
+    app.get(
       '/with-partials',
       to: lambda { |ctx|
         ctx.render_template('with_partials', locals: {name: 'world'})
@@ -37,6 +44,11 @@ class RenderTest < Minitest::Test
 
   def test_render_template_simple
     get('/simple')
+    assert_equal("hello world", last_response.body)
+  end
+
+  def test_render_template_inline
+    get('/inline')
     assert_equal("hello world", last_response.body)
   end
 

@@ -32,6 +32,7 @@ class Anyolite
       begin
         self[:__in_render__] ||= 0
         self[:__in_render__] += 1
+        self[:__in_render_shared__] ||= {}
 
         result = Renderer.send(type.to_sym, self, data, **options)
       ensure
@@ -40,6 +41,8 @@ class Anyolite
 
       # if already inside the template, return the rendered string.
       return result[:body] if self[:__in_render__].positive?
+
+      self.delete(:__in_render_shared__)
 
       @rendered   = true
       @res.status = options[:status] || 200
