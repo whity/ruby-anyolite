@@ -79,8 +79,7 @@ class Anyolite
     end
 
     def session
-      # TODO: if the env does not have the session hash,
-      #   raise as method not defined
+      @req.session
     end
   end
 end
