@@ -60,7 +60,7 @@ class Anyolite
           nil
         end
 
-        def get_binding
+        def get_binding # rubocop:disable Naming/AccessorMethodName
           binding
         end
 
@@ -96,7 +96,10 @@ class Anyolite
           content       = File.read(template_file)
         end
 
-        content = ERB.new(content, eoutvar: "@_out_buf").result(**locals, &block)
+        content = ERB.new(
+          content,
+          eoutvar: '@_out_buf',
+        ).result(**locals, &block)
 
         # clean trailing spaces
         content = content.gsub(/^\s*/, '')

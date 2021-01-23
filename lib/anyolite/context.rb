@@ -42,7 +42,7 @@ class Anyolite
       # if already inside the template, return the rendered string.
       return result[:body] if self[:__in_render__].positive?
 
-      self.delete(:__in_render_shared__)
+      delete(:__in_render_shared__)
 
       @rendered   = true
       @res.status = options[:status] || 200
@@ -76,6 +76,11 @@ class Anyolite
 
     def rendered?
       @rendered
+    end
+
+    def session
+      # TODO: if the env does not have the session hash,
+      #   raise as method not defined
     end
   end
 end
