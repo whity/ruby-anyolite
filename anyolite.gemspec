@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'anyolite'
-  s.version     = '0.1.0'
+  s.version     = '0.1.1'
   s.date        = '2021-01-24'
   s.summary     = "Simplistic web framework"
   s.description = "A simplistic web framework"
@@ -20,4 +20,6 @@ Gem::Specification.new do |s|
   ]
   s.homepage = 'https://github.com/whity/ruby-anyolite'
   s.license  = 'MIT'
+
+  s.add_runtime_dependency 'hanami-router', '~> 1.3', '>= 1.3.2'
 end
