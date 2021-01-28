@@ -4,18 +4,18 @@ require 'hanami/router'
 require 'rack/builder'
 
 class Anyolite < Hanami::Router
-  attr_reader :options
+  attr_reader :config
 
-  def initialize(options = {}, &blk)
+  def initialize(config = {}, &blk)
     @middleware = []
-    @options    = options
+    @config     = config
     @app        = nil
 
-    if self.class != Anyolite && options[:namespace].nil?
-      options[:namespace] = self.class
+    if self.class != Anyolite && config[:namespace].nil?
+      config[:namespace] = self.class
     end
 
-    super(options, &blk)
+    super(config, &blk)
 
     startup if respond_to?(:startup)
 
@@ -48,7 +48,7 @@ class Anyolite < Hanami::Router
     return @app if !@app.nil?
 
     router     = self.class.instance_method(:call).bind(self)
-    options    = @options
+    options    = @config
     middleware = @middleware
     @app       = Rack::Builder.new do
       middleware.each do |item|
