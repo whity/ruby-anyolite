@@ -4,7 +4,7 @@ require 'hanami/router'
 require 'rack/builder'
 
 class Anyolite < Hanami::Router
-  attr_reader :context
+  attr_reader :options
 
   def initialize(options = {}, &blk)
     @middleware = []

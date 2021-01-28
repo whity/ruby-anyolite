@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'anyolite'
-  s.version     = '0.1.1'
+  s.version     = '0.1.2'
   s.date        = '2021-01-24'
   s.summary     = "Simplistic web framework"
   s.description = "A simplistic web framework"
